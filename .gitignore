@@ -1,0 +1,44 @@
+# --- Локальные настройки Qt Creator ---
+.qtcreator/
+*.pro.user
+*.pro.user.*
+*.CMakeLists.txt.user
+*.CMakeLists.txt.user.*
+
+# --- Папки сборки (Build directories) ---
+# Игнорируем стандартную папку build и любые варианты автогенерации каталогов сборки
+build/
+build-*/
+out/
+
+# --- Временные файлы компиляции и кэша CMake ---
+CMakeCache.txt
+CMakeFiles/
+CMakePresets.json
+cmake_install.cmake
+Makefile
+targets.cmake
+.cmake/
+
+# --- Автоматически генерируемый код Qt (Autogen) ---
+# Файлы, которые создают инструменты moc, uic и rcc
+*_autogen/
+ui_*.h
+moc_*.cpp
+qrc_*.cpp
+
+# --- Артефакты сборки и исполняемые файлы ---
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+
+# --- Мусор операционной системы и других IDE ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
