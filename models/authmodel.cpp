@@ -41,3 +41,28 @@ bool AuthModel::registerUser(const QString &login, const QString &password, cons
     }
     return true;
 }
+
+bool AuthModel::checkCustomerProfileExists(int idUser, int &outCustomerId) {
+    QSqlQuery query;
+    query.prepare("SELECT id_customer FROM customers WHERE id_user = :id_user");
+    query.bindValue(":id_user", idUser);
+
+    if (query.exec() && query.next()) {
+        outCustomerId = query.value(0).toInt();
+        return true;
+    }
+    outCustomerId = 0;
+    return false;
+}
+
+bool AuthModel::createCustomerProfile(int idUser, const QString &org, const QString &addr, const QString &phone, const QString &cp) {
+    QSqlQuery query;
+    query.prepare("INSERT INTO customers (id_user, org_name, address, phone, contact_person) "
+                  "VALUES (:id_user, :org_name, :address, :phone, :contact_person)");
+    query.bindValue(":id_user", idUser);
+    query.bindValue(":org_name", org);
+    query.bindValue(":address", addr);
+    query.bindValue(":phone", phone);
+    query.bindValue(":contact_person", cp);
+    return query.exec();
+}

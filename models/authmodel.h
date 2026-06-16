@@ -12,6 +12,8 @@ public:
     // Бизнес-логика авторизации и регистрации
     bool validateUser(const QString &login, const QString &password, User &outUser);
     bool registerUser(const QString &login, const QString &password, const QString &email);
+    bool checkCustomerProfileExists(int idUser, int &outCustomerId);
+    bool createCustomerProfile(int idUser, const QString &org, const QString &addr, const QString &phone, const QString &cp);
 };
 
 #endif // AUTHMODEL_H

@@ -18,25 +18,6 @@ void AuthController::start() {
     m_authWindow->show();
 }
 
-void AuthController::handleLogin(const QString &login, const QString &password) {
-    User authenticatedUser;
-    if (m_model->validateUser(login, password, authenticatedUser)) {
-        QMessageBox::information(m_authWindow, "Успех", "Авторизация прошла успешно!");
-        m_authWindow->close();
-
-        // Проверяем твой сценарий эксплойта
-        if (!authenticatedUser.hasCustomerProfile()) {
-            // TODO: Открыть Окно Заполнения Информации (CustomerInfoDialog)
-            // Если профиль успешно создан -> открыть MainWindow
-            // Если диалог закрыли крестиком -> завершить приложение
-        } else {
-            // TODO: Сразу открыть Основное окно (MainWindow) пользователя
-        }
-    } else {
-        QMessageBox::critical(m_authWindow, "Ошибка", "Неверный логин или пароль!");
-    }
-}
-
 void AuthController::handleOpenRegister() {
     m_regWindow = new RegWindow(m_authWindow);
     connect(m_regWindow, &RegWindow::registrationSubmitted, this, &AuthController::handleRegistration);
@@ -50,4 +31,25 @@ void AuthController::handleRegistration(const QString &login, const QString &pas
     } else {
         QMessageBox::critical(m_regWindow, "Ошибка", "Не удалось зарегистрироваться. Логин или Email уже заняты.");
     }
+}
+
+void AuthController::handleLogin(const QString &login, const QString &password) {
+    if (m_model->validateUser(login, password, m_currentUser)) {
+        m_authWindow->close(); // Закрываем окно входа
+
+        // Создаем главное окно и передаем ему данные пользователя и ссылку на модель
+        m_mainWindow = new MainWindow(m_currentUser, m_model);
+        connect(m_mainWindow, &MainWindow::logoutRequested, this, &AuthController::handleLogout);
+        m_mainWindow->show();
+    } else {
+        QMessageBox::critical(m_authWindow, "Ошибка", "Неверный логин или пароль!");
+    }
+}
+
+void AuthController::handleLogout() {
+    m_mainWindow->close();
+    m_mainWindow->deleteLater();
+    m_mainWindow = nullptr;
+
+    start(); // Возврат на форму авторизации
 }

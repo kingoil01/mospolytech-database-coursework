@@ -36,6 +36,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/auth/authwindow.ui
         views/auth/regwindow.ui
         controllers/authcontroller.cpp
+        views/main/mainwindow.ui
+        views/auth/customerinfodialog.ui
+        views/main/mainwindow.h
+        views/main/mainwindow.cpp
+        views/auth/customerinfodialog.h
+        views/auth/customerinfodialog.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET company APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
