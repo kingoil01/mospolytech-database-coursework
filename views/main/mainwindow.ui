@@ -76,13 +76,6 @@
          <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QPushButton" name="btnCreateOrder">
-           <property name="text">
-            <string>Оформить заказ</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QPushButton" name="btnEditProfile">
            <property name="text">
@@ -94,6 +87,20 @@
           <widget class="QPushButton" name="btnViewOrders">
            <property name="text">
             <string>История заказов</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="btnCreateOrder">
+           <property name="text">
+            <string>Оформить заказ</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="btnChangeCredentials">
+           <property name="text">
+            <string>Изменить данные входа</string>
            </property>
           </widget>
          </item>

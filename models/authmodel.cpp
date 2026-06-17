@@ -66,3 +66,102 @@ bool AuthModel::createCustomerProfile(int idUser, const QString &org, const QStr
     query.bindValue(":contact_person", cp);
     return query.exec();
 }
+
+bool AuthModel::getCustomerProfile(int idUser, QString &outOrg, QString &outAddr, QString &outPhone, QString &outCp) {
+    QSqlQuery query;
+    query.prepare("SELECT org_name, address, phone, contact_person FROM customers WHERE id_user = :id_user");
+    query.bindValue(":id_user", idUser);
+
+    if (query.exec() && query.next()) {
+        outOrg = query.value(0).toString();
+        outAddr = query.value(1).toString();
+        outPhone = query.value(2).toString();
+        outCp = query.value(3).toString();
+        return true;
+    }
+    return false;
+}
+
+bool AuthModel::updateCustomerProfile(int idUser, const QString &org, const QString &addr, const QString &phone, const QString &cp) {
+    QSqlQuery query;
+
+    // 1. Проверяем уникальность телефона (только если его меняют и он не принадлежит текущему юзеру)
+    if (!phone.isEmpty()) {
+        query.prepare("SELECT id_user FROM customers WHERE phone = :phone AND id_user != :id_user");
+        query.bindValue(":phone", phone);
+        query.bindValue(":id_user", idUser);
+        if (query.exec() && query.next()) {
+            qDebug() << "Этот телефон уже привязан к другой организации!";
+            return false;
+        }
+    }
+
+    // 2. Безопасный и статичный UPDATE через COALESCE
+    query.prepare(
+        "UPDATE customers SET "
+        "  org_name = COALESCE(NULLIF(:org, ''), org_name), "
+        "  address = COALESCE(NULLIF(:addr, ''), address), "
+        "  phone = COALESCE(NULLIF(:phone, ''), phone), "
+        "  contact_person = COALESCE(NULLIF(:cp, ''), contact_person) "
+        "WHERE id_user = :id_user"
+    );
+
+    query.bindValue(":org", org);
+    query.bindValue(":addr", addr);
+    query.bindValue(":phone", phone);
+    query.bindValue(":cp", cp);
+    query.bindValue(":id_user", idUser);
+
+    if (!query.exec()) {
+        qDebug() << "Ошибка обновления профиля customers:" << query.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+bool AuthModel::updateUserCredentials(int idUser, const QString &newLogin, const QString &newEmail, const QString &newPassword) {
+    QSqlQuery query;
+
+    // 1. Проверка занятости логина (только если пользователь его ввел)
+    if (!newLogin.isEmpty()) {
+        query.prepare("SELECT id_user FROM users WHERE login = :login AND id_user != :id_user");
+        query.bindValue(":login", newLogin);
+        query.bindValue(":id_user", idUser);
+
+        if (!query.exec()) {
+            qDebug() << "Ошибка проверки уникальности логина:" << query.lastError().text();
+            return false;
+        }
+
+        if (query.next()) {
+            qDebug() << "Этот логин уже занят другим пользователем!";
+            return false; // Прерываем выполнение, возвращаем false
+        }
+    }
+
+    // 2. Статичный, безопасный запрос через COALESCE и CASE
+    query.prepare(
+        "UPDATE users SET "
+        "  login = COALESCE(NULLIF(:newLogin, ''), login), "
+        "  email = COALESCE(NULLIF(:newEmail, ''), email), "
+        "  password = CASE "
+        "    WHEN :newPassword = '' THEN password "
+        "    ELSE :newPassword "
+        "  END "
+        "WHERE id_user = :id_user"
+    );
+
+    // Привязываем переменные
+    query.bindValue(":newLogin", newLogin);
+    query.bindValue(":newEmail", newEmail);
+    query.bindValue(":newPassword", newPassword);
+    query.bindValue(":id_user", idUser);
+
+    if (!query.exec()) {
+        qDebug() << "!!! Ошибка выполнения UPDATE !!!";
+        qDebug() << "Текст ошибки БД:" << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}

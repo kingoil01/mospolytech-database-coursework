@@ -9,6 +9,8 @@ class CustomerInfoDialog : public QDialog {
     Q_OBJECT
 public:
     explicit CustomerInfoDialog(QWidget *parent = nullptr);
+    void setInitialData(const QString &org, const QString &addr, const QString &phone, const QString &cp);
+
     ~CustomerInfoDialog();
 
     // Геттеры для извлечения введенного текста в MainWindow

@@ -23,6 +23,7 @@ private slots:
     void on_btnViewOrders_clicked();
     void on_btnEditProfile_clicked();
     void on_btnLogout_clicked();
+    void on_btnChangeCredentials_clicked();
 
 private:
     Ui::MainWindow *ui;

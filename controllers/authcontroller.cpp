@@ -6,6 +6,7 @@ AuthController::AuthController(QObject *parent)
 
 AuthController::~AuthController() {
     if (m_authWindow) m_authWindow->deleteLater();
+    if (m_mainWindow) m_mainWindow->deleteLater();
 }
 
 void AuthController::start() {
