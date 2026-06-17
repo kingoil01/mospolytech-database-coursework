@@ -45,6 +45,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/auth/changedatadialog.ui
         views/auth/changedatadialog.h
         views/auth/changedatadialog.cpp
+        views/main/orderwindow.ui
+        views/main/orderwindow.h
+        views/main/orderwindow.cpp
+        views/main/orderhistorydialog.ui
+        views/main/orderhistorydialog.h
+        views/main/orderhistorydialog.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET company APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

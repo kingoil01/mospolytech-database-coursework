@@ -1,5 +1,7 @@
 #include "mainwindow.h"
+#include "orderwindow.h"
 #include "ui_mainwindow.h"
+#include "orderhistorydialog.h"
 #include "../auth/customerinfodialog.h"
 #include "../auth/changedatadialog.h"
 
@@ -74,11 +76,13 @@ void MainWindow::on_btnEditProfile_clicked() {
 }
 
 void MainWindow::on_btnCreateOrder_clicked() {
-    QMessageBox::information(this, "Заглушка", "Форма создания заказа.");
+    OrderWindow orderWin(m_currentUser.idUser(), m_model, this);
+    orderWin.exec(); // Открываем модально
 }
 
 void MainWindow::on_btnViewOrders_clicked() {
-    QMessageBox::information(this, "Заглушка", "Просмотр заказов.");
+    OrderHistoryDialog historyWin(m_currentUser.idUser(), this);
+    historyWin.exec(); // Открываем модально историю заказов
 }
 
 void MainWindow::on_btnChangeCredentials_clicked() {
