@@ -2,23 +2,23 @@
 #define ORDERHISTORYDIALOG_H
 
 #include <QDialog>
-#include <QTreeWidgetItem>
+#include <QTableWidgetItem>  // <-- ДОБАВЛЯЕМ
+#include "../../models/main/mainmodel.h"
 
 namespace Ui { class OrderHistoryDialog; }
 
 class OrderHistoryDialog : public QDialog {
     Q_OBJECT
 public:
-    explicit OrderHistoryDialog(int idUser, QWidget *parent = nullptr);
+    explicit OrderHistoryDialog(int userId, MainModel *model, QWidget *parent = nullptr);
     ~OrderHistoryDialog();
 
-private slots:
-    void on_btnClose_clicked();
-
 private:
-    void loadOrderHistory();
+    void loadHistory();
+
     Ui::OrderHistoryDialog *ui;
-    int m_idUser;
+    MainModel *m_model;
+    int m_userId;
 };
 
 #endif // ORDERHISTORYDIALOG_H

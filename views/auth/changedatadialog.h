@@ -15,6 +15,11 @@ public:
     QString getNewEmail() const;
     QString getNewPassword() const;
 
+    void setCurrentLogin(const QString &login);
+    void setCurrentEmail(const QString &email);
+
+    bool isValidEmail(const QString &email) const;
+
 private slots:
     void on_btnSave_clicked();
     void on_btnCancel_clicked();

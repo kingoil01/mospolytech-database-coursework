@@ -22,9 +22,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(company
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-
-
-
         models/auth/authmodel.cpp
         models/auth/authmodel.h
         models/auth/user.h
@@ -32,15 +29,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/auth/authwindow.cpp
         views/auth/regwindow.h
         views/auth/regwindow.cpp
-
         controllers/auth/authcontroller.h
         controllers/auth/authcontroller.cpp
-
         models/databasemanager.h
         models/databasemanager.cpp
         views/auth/authwindow.ui
         views/auth/regwindow.ui
-
         views/main/mainwindow.ui
         views/auth/customerinfodialog.ui
         views/main/mainwindow.h
@@ -58,6 +52,16 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/main/orderhistorydialog.cpp
         controllers/main/ordercontroller.h
         controllers/main/ordercontroller.cpp
+        controllers/main/maincontroller.h
+        controllers/main/maincontroller.cpp
+        models/main/product.h
+        models/main/deliverymethod.h
+        models/main/deliveryoption.h
+        models/main/order.h
+        models/main/orderitem.h
+        models/main/customer.h
+        models/main/mainmodel.h
+        models/main/mainmodel.cpp
 
 
     )

@@ -17,6 +17,7 @@ public:
     bool updateUserCredentials(int idUser, const QString &newLogin, const QString &newEmail, const QString &newPassword);
     bool getCustomerProfile(int idUser, QString &outOrg, QString &outAddr, QString &outPhone, QString &outCp);
     bool updateCustomerProfile(int idUser, const QString &org, const QString &addr, const QString &phone, const QString &cp);
+    bool userExists(const QString &login, int excludeUserId = -1);
 
 };
 

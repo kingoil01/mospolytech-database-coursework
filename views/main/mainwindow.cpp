@@ -1,99 +1,68 @@
 #include "mainwindow.h"
-#include "orderwindow.h"
 #include "ui_mainwindow.h"
-#include "orderhistorydialog.h"
-#include "../auth/customerinfodialog.h"
-#include "../auth/changedatadialog.h"
-
 #include <QMessageBox>
 
-MainWindow::MainWindow(const User &user, AuthModel *model, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), m_currentUser(user), m_model(model) {
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    updateInterfaceByRole();
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() {
+    delete ui;
+}
 
-void MainWindow::updateInterfaceByRole() {
-    int customerId = 0;
-    // Проверяем в БД наличие профиля организации
-    bool hasProfile = m_model->checkCustomerProfileExists(m_currentUser.idUser(), customerId);
+void MainWindow::setUserInfo(const User &user) {
+    // Используем существующие элементы UI или добавляем новые
+    // Например, можно использовать statusBar или label
+    // Если у вас нет labelUserInfo, можно использовать statusBar
+    // statusBar()->showMessage(QString("Пользователь: %1 (%2)").arg(user.login()).arg(user.email()));
+    // Или добавить label в UI
+}
 
+void MainWindow::setProfileButtonMode(bool hasProfile) {
     if (!hasProfile) {
-        // Профиля нет -> блокируем функции заказов
+        ui->btnEditProfile->setText("Создать профиль организации");
         ui->btnCreateOrder->setEnabled(false);
         ui->btnViewOrders->setEnabled(false);
         ui->btnCreateOrder->setToolTip("Доступно только после заполнения профиля организации");
         ui->btnViewOrders->setToolTip("Доступно только после заполнения профиля организации");
-
-        ui->btnEditProfile->setText("Создать профиль организации");
     } else {
-        // Профиль есть -> всё открыто
+        ui->btnEditProfile->setText("Изменить профиль организации");
         ui->btnCreateOrder->setEnabled(true);
         ui->btnViewOrders->setEnabled(true);
         ui->btnCreateOrder->setToolTip("");
         ui->btnViewOrders->setToolTip("");
+    }
+}
 
-        ui->btnEditProfile->setText("Изменить профиль организации");
+void MainWindow::setOrderButtonsEnabled(bool enabled) {
+    ui->btnCreateOrder->setEnabled(enabled);
+    ui->btnViewOrders->setEnabled(enabled);
+}
+
+void MainWindow::showMessage(const QString &title, const QString &message, bool isError) {
+    if (isError) {
+        QMessageBox::critical(this, title, message);
+    } else {
+        QMessageBox::information(this, title, message);
     }
 }
 
 void MainWindow::on_btnEditProfile_clicked() {
-    int customerId = 0;
-    bool hasProfile = m_model->checkCustomerProfileExists(m_currentUser.idUser(), customerId);
-
-    CustomerInfoDialog dialog(this);
-
-    if (!hasProfile) {
-        // --- РЕЖИМ ДОБАВЛЕНИЯ (Профиля еще нет) ---
-        if (dialog.exec() == QDialog::Accepted) {
-            if (m_model->createCustomerProfile(m_currentUser.idUser(), dialog.getOrgName(), dialog.getAddress(), dialog.getPhone(), dialog.getContactPerson())) {
-                QMessageBox::information(this, "Успех", "Профиль успешно создан! Вам доступны функции заказа.");
-                updateInterfaceByRole(); // Мгновенно разблокируем кнопки заказов!
-            } else {
-                QMessageBox::critical(this, "Ошибка", "Не удалось создать профиль. Проверьте корректность данных.");
-            }
-        }
-    } else {
-        // --- РЕЖИМ РЕДАКТИРОВАНИЯ (Профиль уже существует) ---
-        QString org, addr, phone, cp;
-
-        // Загружаем текущие данные из БД для предзаполнения полей формы
-        if (m_model->getCustomerProfile(m_currentUser.idUser(), org, addr, phone, cp)) {
-            dialog.setInitialData(org, addr, phone, cp);
-        }
-
-        if (dialog.exec() == QDialog::Accepted) {
-            if (m_model->updateCustomerProfile(m_currentUser.idUser(), dialog.getOrgName(), dialog.getAddress(), dialog.getPhone(), dialog.getContactPerson())) {
-                QMessageBox::information(this, "Успех", "Данные организации успешно обновлены!");
-                updateInterfaceByRole();
-            } else {
-                QMessageBox::critical(this, "Ошибка", "Не удалось обновить профиль (возможно, телефон уже занят другой фирмой).");
-            }
-        }
-    }
+    emit editProfileRequested();
 }
 
 void MainWindow::on_btnCreateOrder_clicked() {
-    OrderWindow orderWin(m_currentUser.idUser(), m_model, this);
-    orderWin.exec(); // Открываем модально
+    emit createOrderRequested();
 }
 
 void MainWindow::on_btnViewOrders_clicked() {
-    OrderHistoryDialog historyWin(m_currentUser.idUser(), this);
-    historyWin.exec(); // Открываем модально историю заказов
+    emit viewOrdersRequested();
 }
 
 void MainWindow::on_btnChangeCredentials_clicked() {
-    ChangeDataDialog dialog(this);
-    if (dialog.exec() == QDialog::Accepted) {
-        if (m_model->updateUserCredentials(m_currentUser.idUser(), dialog.getNewLogin(), dialog.getNewEmail(), dialog.getNewPassword())) {
-            QMessageBox::information(this, "Успех", "Ваши данные успешно изменены!");
-        } else {
-            QMessageBox::critical(this, "Ошибка", "Не удалось обновить данные (возможно, логин занят).");
-        }
-    }
+    emit changeCredentialsRequested();
 }
 
 void MainWindow::on_btnLogout_clicked() {

@@ -6,14 +6,21 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    // Подставляем параметры подключения к твоей PostgreSQL компании
+    // Подключаемся к БД
+    DatabaseManager &db = DatabaseManager::instance();
     if (!DatabaseManager::instance().connectToDb("localhost", 5432, "company", "postgres", "Adminka7")) {
         QMessageBox::critical(nullptr, "Ошибка БД", "Нет соединения с сервером PostgreSQL!");
         return -1;
     }
 
+    // Запускаем контроллер авторизации
     AuthController controller;
-    controller.start(); // Запуск бизнес-логики окон авторизации
+    controller.start();
 
-    return a.exec();
+    int result = a.exec();
+
+    // Отключаемся от БД
+    db.disconnectFromDb();
+
+    return result;
 }

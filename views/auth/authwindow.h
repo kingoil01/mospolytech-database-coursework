@@ -11,6 +11,10 @@ public:
     explicit AuthWindow(QWidget *parent = nullptr);
     ~AuthWindow();
 
+    // <-- ДОБАВЛЯЕМ НЕДОСТАЮЩИЕ МЕТОДЫ
+    void clearFields();
+    void showMessage(const QString &title, const QString &message);
+
 signals:
     void loginSubmitted(const QString &login, const QString &password);
     void openRegisterRequested();

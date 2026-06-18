@@ -8,6 +8,16 @@ AuthWindow::AuthWindow(QWidget *parent) : QWidget(parent), ui(new Ui::AuthWindow
 
 AuthWindow::~AuthWindow() { delete ui; }
 
+// <-- РЕАЛИЗУЕМ НОВЫЕ МЕТОДЫ
+void AuthWindow::clearFields() {
+    ui->editLogin->clear();
+    ui->editPassword->clear();
+}
+
+void AuthWindow::showMessage(const QString &title, const QString &message) {
+    QMessageBox::information(this, title, message);
+}
+
 void AuthWindow::on_btnLogin_clicked() {
     QString login = ui->editLogin->text().trimmed();
     QString password = ui->editPassword->text();
@@ -24,5 +34,5 @@ void AuthWindow::on_btnOpenReg_clicked() {
 }
 
 void AuthWindow::on_btnClose_clicked() {
-    this->close(); // Закрывает окно авторизации. Так как это главное активное окно, приложение завершится.
+    this->close();
 }
