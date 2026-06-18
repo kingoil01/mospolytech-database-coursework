@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QMap>
 #include <QString>
-#include <QDate>  // <-- ДОБАВИТЬ ЭТОТ INCLUDE
+#include <QDate>
 
 // Структуры для работы с заказами
 struct CartItem {
@@ -24,8 +24,15 @@ struct DeliveryOption {
 struct OrderInfo {
     int id;
     QString docNumber;
-    QDate orderDate;    // <-- ТЕПЕРЬ QDate ИЗВЕСТЕН
+    QDate orderDate;
     double totalAmount;
+};
+
+// <-- НОВАЯ СТРУКТУРА ДЛЯ ПОЗИЦИЙ ЗАКАЗА
+struct OrderItemInfo {
+    QString productName;
+    QString deliveryMethodName;
+    int quantity;
 };
 
 class MainModel : public QObject {
@@ -52,6 +59,9 @@ public:
 
     // История заказов
     QVector<OrderInfo> getOrderHistory(int userId);
+
+    // <-- НОВЫЙ МЕТОД ДЛЯ ПОЛУЧЕНИЯ ПОЗИЦИЙ ЗАКАЗА
+    QVector<OrderItemInfo> getOrderItems(int orderId);
 
     QString getLastError() const;
 

@@ -200,3 +200,32 @@ QVector<OrderInfo> MainModel::getOrderHistory(int userId) {
 QString MainModel::getLastError() const {
     return m_lastError;
 }
+
+QVector<OrderItemInfo> MainModel::getOrderItems(int orderId) {
+    QVector<OrderItemInfo> items;
+
+    QSqlQuery query;
+    QString sql = QString(
+        "SELECT p.product_name, dm.method_name, oi.quantity "
+        "FROM order_items oi "
+        "INNER JOIN delivery_options d_opt ON oi.id_delivery_option = d_opt.id_delivery_option "
+        "INNER JOIN products p ON d_opt.id_product = p.id_product "
+        "INNER JOIN delivery_methods dm ON d_opt.id_delivery_method = dm.id_delivery_method "
+        "WHERE oi.id_order = %1"
+    ).arg(orderId);
+
+    if (!query.exec(sql)) {
+        qDebug() << "Ошибка получения позиций заказа:" << query.lastError().text();
+        return items;
+    }
+
+    while (query.next()) {
+        OrderItemInfo item;
+        item.productName = query.value(0).toString();
+        item.deliveryMethodName = query.value(1).toString();
+        item.quantity = query.value(2).toInt();
+        items.append(item);
+    }
+
+    return items;
+}
