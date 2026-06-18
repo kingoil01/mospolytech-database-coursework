@@ -27,8 +27,7 @@ void RegWindow::on_btnRegister_clicked() {
     }
 
     if (!validatePassword(password)) {
-        QMessageBox::warning(this, "Слабый пароль",
-                             "Пароль должен быть длиннее 8 символов, содержать заглавную букву, цифру и спецсимвол!");
+        QMessageBox::warning(this, "Слабый пароль", "Пароль должен быть длиннее 8 символов, содержать заглавную букву, цифру и спецсимвол!");
         return;
     }
     emit registrationSubmitted(login, password, email);

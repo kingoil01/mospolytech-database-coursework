@@ -29,13 +29,15 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/auth/authwindow.cpp
         views/auth/regwindow.h
         views/auth/regwindow.cpp
-        controllers/authcontroller.h
+
+        controllers/auth/authcontroller.h
+        controllers/auth/authcontroller.cpp
 
         models/databasemanager.h
         models/databasemanager.cpp
         views/auth/authwindow.ui
         views/auth/regwindow.ui
-        controllers/authcontroller.cpp
+
         views/main/mainwindow.ui
         views/auth/customerinfodialog.ui
         views/main/mainwindow.h
@@ -51,6 +53,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/main/orderhistorydialog.ui
         views/main/orderhistorydialog.h
         views/main/orderhistorydialog.cpp
+        controllers/main/ordercontroller.h
+        controllers/main/ordercontroller.cpp
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET company APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

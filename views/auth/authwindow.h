@@ -16,8 +16,8 @@ signals:
     void openRegisterRequested();
 
 private slots:
-    void on_btnLogin_clicked();     // Имя должно строго совпадать с objectName кнопки в .ui
-    void on_btnOpenReg_clicked();   // Имя должно строго совпадать с objectName кнопки в .ui
+    void on_btnLogin_clicked();
+    void on_btnOpenReg_clicked();
     void on_btnClose_clicked();
 
 private:
