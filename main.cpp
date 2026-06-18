@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include "models/databasemanager.h" // Твой базовый класс-синглтон подключения к БД
-#include "controllers/authcontroller.h"
+#include "controllers/auth/authcontroller.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
