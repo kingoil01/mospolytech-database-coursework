@@ -22,9 +22,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(company
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        models/user.h
-        models/authmodel.h
-        models/authmodel.cpp
+
+
+
+        models/auth/authmodel.cpp
+        models/auth/authmodel.h
+        models/auth/user.h
         views/auth/authwindow.h
         views/auth/authwindow.cpp
         views/auth/regwindow.h
