@@ -6,6 +6,7 @@
 #include "../../views/auth/authwindow.h"
 
 class MainController;
+class AdminController;
 class RegWindow;
 
 class AuthController : public QObject {
@@ -24,11 +25,14 @@ private slots:
 
 private:
     void showMainWindow(const User &user);
+    void showAdminWindow(const User &user);
 
     AuthModel *m_model;
     AuthWindow *m_authWindow;
     RegWindow *m_regWindow;
     MainController *m_mainController;
+    AdminController *m_adminController;
+
 };
 
 #endif // AUTHCONTROLLER_H

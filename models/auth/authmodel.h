@@ -19,6 +19,13 @@ public:
     bool updateCustomerProfile(int idUser, const QString &org, const QString &addr, const QString &phone, const QString &cp);
     bool userExists(const QString &login, int excludeUserId = -1);
 
+    // Проверка роли пользователя
+    bool isAdmin(int userId) const;
+    bool hasRole(int userId, const QString &roleName) const;
+
+    // Получение ролей пользователя
+    QStringList getUserRoles(int userId) const;
+
 };
 
 #endif // AUTHMODEL_H

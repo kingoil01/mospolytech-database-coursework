@@ -165,3 +165,62 @@ bool AuthModel::updateUserCredentials(int idUser, const QString &newLogin, const
 
     return true;
 }
+
+bool AuthModel::isAdmin(int userId) const {
+    // Проверяем по ID роли (1 - Администратор)
+    QSqlQuery query;
+    query.prepare(
+        "SELECT COUNT(*) FROM user_roles ur "
+        "WHERE ur.id_user = :userId AND ur.id_role = 1"
+    );
+    query.bindValue(":userId", userId);
+
+    if (!query.exec() || !query.next()) {
+        qDebug() << "Ошибка проверки админа:" << query.lastError().text();
+        return false;
+    }
+
+    bool result = query.value(0).toInt() > 0;
+    qDebug() << ">>> isAdmin(" << userId << ") = " << result;
+    return result;
+}
+
+bool AuthModel::hasRole(int userId, const QString &roleName) const {
+    QSqlQuery query;
+    query.prepare(
+        "SELECT COUNT(*) FROM user_roles ur "
+        "INNER JOIN roles r ON ur.id_role = r.id_role "
+        "WHERE ur.id_user = :userId AND r.role_name = :roleName"
+    );
+    query.bindValue(":userId", userId);
+    query.bindValue(":roleName", roleName);
+
+    if (!query.exec() || !query.next()) {
+        qDebug() << ">>> ОШИБКА hasRole():" << query.lastError().text();  // ДЕБАГ
+        return false;
+    }
+
+    return query.value(0).toInt() > 0;
+}
+
+QStringList AuthModel::getUserRoles(int userId) const {
+    QStringList roles;
+
+    QSqlQuery query;
+    query.prepare(
+        "SELECT r.role_name FROM user_roles ur "
+        "INNER JOIN roles r ON ur.id_role = r.id_role "
+        "WHERE ur.id_user = :userId"
+    );
+    query.bindValue(":userId", userId);
+
+    if (!query.exec()) {
+        return roles;
+    }
+
+    while (query.next()) {
+        roles.append(query.value(0).toString());
+    }
+
+    return roles;
+}

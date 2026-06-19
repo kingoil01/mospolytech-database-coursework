@@ -1,5 +1,7 @@
 #include "authcontroller.h"
 #include "../../controllers/main/maincontroller.h"
+#include "../../controllers/admin/admincontroller.h"
+#include "../../controllers/main/maincontroller.h"
 #include "../../views/auth/regwindow.h"
 #include <QMessageBox>
 
@@ -8,6 +10,7 @@ AuthController::AuthController(QObject *parent)
     , m_model(new AuthModel(this))
     , m_authWindow(nullptr)
     , m_regWindow(nullptr)
+    , m_adminController(nullptr)
     , m_mainController(nullptr) {
 
     // Создаем окно авторизации при создании контроллера
@@ -56,13 +59,35 @@ void AuthController::handleLogin(const QString &login, const QString &password) 
     User user;
     if (m_model->validateUser(login, password, user)) {
         m_authWindow->close();
-        showMainWindow(user);
+
+        // ===== ДЕБАГ =====
+        qDebug() << "========================================";
+        qDebug() << "ПОЛЬЗОВАТЕЛЬ ВОШЕЛ:";
+        qDebug() << "  Login:" << user.login();
+        qDebug() << "  ID:" << user.idUser();
+        qDebug() << "  Email:" << user.email();
+        qDebug() << "  HasCustomerProfile:" << user.hasCustomerProfile();
+
+        bool isAdmin = m_model->isAdmin(user.idUser());
+        qDebug() << "  isAdmin:" << isAdmin;
+        qDebug() << "========================================";
+        // ===== КОНЕЦ ДЕБАГА =====
+
+        if (isAdmin) {
+            qDebug() << ">>> ВЫЗЫВАЕМ showAdminWindow()";  // ДЕБАГ
+            showAdminWindow(user);
+        } else {
+            qDebug() << ">>> ВЫЗЫВАЕМ showMainWindow()";    // ДЕБАГ
+            showMainWindow(user);
+        }
     } else {
         QMessageBox::critical(m_authWindow, "Ошибка", "Неверный логин или пароль!");
     }
 }
 
 void AuthController::showMainWindow(const User &user) {
+    qDebug() << ">>> showMainWindow() ВЫЗВАН для пользователя:" << user.login();  // ДЕБАГ
+
     if (m_mainController) {
         m_mainController->deleteLater();
     }
@@ -79,6 +104,24 @@ void AuthController::handleMainLogout() {
         m_mainController = nullptr;
     }
 
+    if (m_adminController) {
+        m_adminController->deleteLater();
+        m_adminController = nullptr;
+    }
+
     m_authWindow->clearFields();
     m_authWindow->show();
+}
+
+void AuthController::showAdminWindow(const User &user) {
+    qDebug() << ">>> showAdminWindow() ВЫЗВАН для пользователя:" << user.login();  // ДЕБАГ
+
+    if (m_adminController) {
+        m_adminController->deleteLater();
+    }
+
+    m_adminController = new AdminController(user, m_model, this);
+    connect(m_adminController, &AdminController::logout,
+            this, &AuthController::handleMainLogout);
+    m_adminController->start();
 }

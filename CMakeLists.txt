@@ -62,6 +62,22 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         models/main/customer.h
         models/main/mainmodel.h
         models/main/mainmodel.cpp
+        views/admin/adminwindow.cpp
+        views/admin/adminwindow.h
+        views/admin/adminwindow.ui
+        views/admin/createuserdialog.h
+        views/admin/createuserdialog.cpp
+        views/admin/createuserdialog.ui
+        views/admin/deleteuserdialog.h
+        views/admin/deleteuserdialog.cpp
+        views/admin/deleteuserdialog.ui
+
+
+        controllers/admin/admincontroller.h
+        controllers/admin/admincontroller.cpp
+        models/admin/adminmodel.h
+        models/admin/adminmodel.cpp
+
 
 
     )
