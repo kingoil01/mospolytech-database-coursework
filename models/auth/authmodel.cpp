@@ -180,6 +180,23 @@ bool AuthModel::isAdmin(int userId) const {
     return result;
 }
 
+bool AuthModel::isManager(int userId) const {
+    // Проверяем по ID роли (4 - Менеджер)
+    QSqlQuery query;
+    query.prepare(
+        "SELECT COUNT(*) FROM user_roles ur "
+        "WHERE ur.id_user = :userId AND ur.id_role = 4"
+    );
+    query.bindValue(":userId", userId);
+
+    if (!query.exec() || !query.next()) {
+        return false;
+    }
+
+    bool result = query.value(0).toInt() > 0;
+    return result;
+}
+
 bool AuthModel::hasRole(int userId, const QString &roleName) const {
     QSqlQuery query;
     query.prepare(

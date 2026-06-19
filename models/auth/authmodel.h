@@ -21,6 +21,7 @@ public:
 
     // Проверка роли пользователя
     bool isAdmin(int userId) const;
+    bool isManager(int userId) const;
     bool hasRole(int userId, const QString &roleName) const;
 
     // Получение всех ролей пользователя

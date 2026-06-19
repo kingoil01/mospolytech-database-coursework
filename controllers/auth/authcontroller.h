@@ -10,6 +10,7 @@
 class MainController;
 class AdminController;
 class RegWindow;
+class ManagerController;
 
 class AuthController : public QObject {
     Q_OBJECT
@@ -28,6 +29,7 @@ private slots:
 private:
     void showMainWindow(const User &user);
     void showAdminWindow(const User &user);
+    void showManagerWindow(const User &user);
     void showRoleSelectionDialog(const User &user, const QVector<QPair<int, QString>> &roles);  // <-- НОВЫЙ МЕТОД
 
     AuthModel *m_model;
@@ -35,6 +37,7 @@ private:
     RegWindow *m_regWindow;
     MainController *m_mainController;
     AdminController *m_adminController;
+    ManagerController *m_managerController;
 };
 
 #endif // AUTHCONTROLLER_H

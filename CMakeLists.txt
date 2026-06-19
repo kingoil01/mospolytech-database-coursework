@@ -79,6 +79,13 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         models/admin/adminmodel.cpp
         models/admin/adminuser.h
         models/admin/role.h
+        views/manager/managerwindow.ui
+        views/manager/managerwindow.cpp
+        views/manager/managerwindow.h
+        models/manager/managermodel.h
+        models/manager/managermodel.cpp
+        controllers/manager/managercontroller.h
+        controllers/manager/managercontroller.cpp
 
 
 

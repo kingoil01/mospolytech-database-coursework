@@ -2,6 +2,7 @@
 #include "../../controllers/main/maincontroller.h"
 #include "../../controllers/admin/admincontroller.h"
 #include "../../views/auth/regwindow.h"
+#include "../../controllers/manager/managercontroller.h"
 #include <QMessageBox>
 #include <QDialog>
 #include <QVBoxLayout>
@@ -16,6 +17,7 @@ AuthController::AuthController(QObject *parent)
     , m_authWindow(nullptr)
     , m_regWindow(nullptr)
     , m_adminController(nullptr)
+    , m_managerController(nullptr)
     , m_mainController(nullptr) {
 
     m_authWindow = new AuthWindow();
@@ -38,6 +40,9 @@ AuthController::~AuthController() {
     }
     if (m_adminController) {
         m_adminController->deleteLater();
+    }
+    if (m_managerController) {
+        m_managerController->deleteLater();
     }
 }
 
@@ -79,7 +84,11 @@ void AuthController::handleLogin(const QString &login, const QString &password) 
             QString roleName = roles.first().second;
             if (roleName == "Администратор" || roleName.toLower() == "admin") {
                 showAdminWindow(user);
-            } else {
+            }
+            else if (roleName == "Менеджер" || roleName.toLower() == "manager") {
+                showManagerWindow(user);
+            }
+            else {
                 showMainWindow(user);
             }
         } else {
@@ -125,7 +134,11 @@ void AuthController::showRoleSelectionDialog(const User &user, const QVector<QPa
 
         if (selectedRole == "Администратор" || selectedRole.toLower() == "admin") {
             showAdminWindow(user);
-        } else {
+        }
+        else if (selectedRole == "Менеджер" || selectedRole.toLower() == "manager") {
+            showManagerWindow(user);
+        }
+        else {
             showMainWindow(user);
         }
     } else {
@@ -159,6 +172,11 @@ void AuthController::handleMainLogout() {
         m_adminController = nullptr;
     }
 
+    if (m_managerController) {
+        m_managerController->deleteLater();
+        m_managerController = nullptr;
+    }
+
     m_authWindow->clearFields();
     m_authWindow->show();
 }
@@ -174,4 +192,17 @@ void AuthController::showAdminWindow(const User &user) {
     connect(m_adminController, &AdminController::logout,
             this, &AuthController::handleMainLogout);
     m_adminController->start();
+}
+
+void AuthController::showManagerWindow(const User &user) {
+    m_authWindow->close();
+
+    if (m_managerController) {
+        m_managerController->deleteLater();
+    }
+
+    m_managerController = new ManagerController(user, m_model, this);
+    connect(m_managerController, &ManagerController::logout,
+            this, &AuthController::handleMainLogout);
+    m_managerController->start();
 }
