@@ -3,13 +3,7 @@
 
 #include <QDialog>
 #include <QVector>
-
-struct UserListItem {
-    int id;
-    QString login;
-    QString email;
-    bool isAdmin;
-};
+#include "../../models/admin/adminuser.h"
 
 namespace Ui { class DeleteUserDialog; }
 
@@ -19,12 +13,10 @@ public:
     explicit DeleteUserDialog(QWidget *parent = nullptr);
     ~DeleteUserDialog();
 
-    // Методы для управления списком
-    void setUserList(const QVector<UserListItem> &users);
+    void setUserList(const QVector<AdminUser> &users);
     int getSelectedUserId() const;
     void clearSelection();
 
-    // Методы для сообщений
     void showError(const QString &message);
     void showWarning(const QString &message);
     bool askConfirmation(const QString &message);

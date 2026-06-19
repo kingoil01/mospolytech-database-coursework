@@ -4,7 +4,8 @@
 #include <QObject>
 #include "../../models/auth/user.h"
 #include "../../models/auth/authmodel.h"
-#include "adminmodel.h"
+#include "../../models/admin/adminmodel.h"
+#include "../../models/admin/adminuser.h"
 #include "../../views/admin/adminwindow.h"
 
 class AdminController : public QObject {
@@ -32,7 +33,7 @@ private:
     AdminModel *m_adminModel;
     User m_adminUser;
 
-    QVector<AdminUserInfo> m_cachedUsers;
+    QVector<AdminUser> m_cachedUsers;
 };
 
 #endif // ADMINCONTROLLER_H

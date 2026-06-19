@@ -6,8 +6,6 @@ DeleteUserDialog::DeleteUserDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DeleteUserDialog) {
     ui->setupUi(this);
-
-    // Изначально кнопка удаления неактивна
     ui->btnDelete->setEnabled(false);
 }
 
@@ -15,16 +13,12 @@ DeleteUserDialog::~DeleteUserDialog() {
     delete ui;
 }
 
-void DeleteUserDialog::setUserList(const QVector<UserListItem> &users) {
+void DeleteUserDialog::setUserList(const QVector<AdminUser> &users) {
     ui->listUsers->clear();
 
     for (const auto &user : users) {
-        QString displayText = QString("%1 (%2)").arg(user.login).arg(user.email);
-        if (user.isAdmin) {
-            displayText += " [АДМИН]";
-        }
-        QListWidgetItem *item = new QListWidgetItem(displayText, ui->listUsers);
-        item->setData(Qt::UserRole, user.id);
+        QListWidgetItem *item = new QListWidgetItem(user.getDisplayText(), ui->listUsers);
+        item->setData(Qt::UserRole, user.idUser());
     }
 }
 
@@ -66,7 +60,6 @@ void DeleteUserDialog::on_btnDelete_clicked() {
         return;
     }
 
-    // Запрашиваем подтверждение
     if (askConfirmation("Вы действительно хотите удалить выбранного пользователя?\n"
                         "Его профиль клиента будет сохранен без привязки к пользователю.")) {
         accept();
@@ -78,6 +71,5 @@ void DeleteUserDialog::on_btnCancel_clicked() {
 }
 
 void DeleteUserDialog::on_listUsers_itemSelectionChanged() {
-    // Активируем кнопку удаления только если выбран пользователь
     ui->btnDelete->setEnabled(ui->listUsers->currentItem() != nullptr);
 }

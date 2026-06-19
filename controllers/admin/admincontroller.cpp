@@ -10,7 +10,6 @@ AdminController::AdminController(const User &adminUser, AuthModel *authModel, QO
     , m_adminModel(new AdminModel(this))
     , m_adminUser(adminUser) {
 
-    // Связываем View со слотами Controller
     connect(m_view, &AdminWindow::createUserRequested,
             this, &AdminController::handleCreateUser);
     connect(m_view, &AdminWindow::deleteUserRequested,
@@ -40,7 +39,6 @@ void AdminController::handleCreateUser() {
         QString password = dialog.getPassword();
         bool isAdmin = dialog.isAdminRole();
 
-        // Валидация
         if (login.isEmpty() || email.isEmpty() || password.isEmpty()) {
             dialog.showError("Все поля должны быть заполнены!");
             return;
@@ -56,16 +54,13 @@ void AdminController::handleCreateUser() {
             return;
         }
 
-        // Простая проверка email
         if (!email.contains('@') || !email.contains('.')) {
             dialog.showError("Введите корректный email!");
             return;
         }
 
-        // Создаем пользователя через модель
         if (m_adminModel->createUser(login, email, password, isAdmin)) {
             m_view->showMessage("Успех", QString("Пользователь '%1' успешно создан!").arg(login));
-            // Обновляем кэш для удаления
             loadUsersForDeletion();
         } else {
             m_view->showMessage("Ошибка",
@@ -78,31 +73,21 @@ void AdminController::handleCreateUser() {
 void AdminController::handleDeleteUser() {
     DeleteUserDialog dialog(m_view);
 
-    // Загружаем список пользователей
-    loadUsersForDeletion();
+    QVector<AdminUser> users = m_adminModel->getAllUsers();
 
-    // Преобразуем в формат для диалога
-    QVector<UserListItem> userItems;
-    for (const auto &user : m_cachedUsers) {
-        // Не показываем самого админа в списке для удаления
-        if (user.id == m_adminUser.idUser()) {
-            continue;
+    QVector<AdminUser> filteredUsers;
+    for (const auto &user : users) {
+        if (user.idUser() != m_adminUser.idUser()) {
+            filteredUsers.append(user);
         }
-
-        UserListItem item;
-        item.id = user.id;
-        item.login = user.login;
-        item.email = user.email;
-        item.isAdmin = user.isAdmin;
-        userItems.append(item);
     }
 
-    if (userItems.isEmpty()) {
+    if (filteredUsers.isEmpty()) {
         m_view->showMessage("Информация", "Нет пользователей для удаления.");
         return;
     }
 
-    dialog.setUserList(userItems);
+    dialog.setUserList(filteredUsers);
 
     if (dialog.exec() == QDialog::Accepted) {
         int userId = dialog.getSelectedUserId();
@@ -111,19 +96,16 @@ void AdminController::handleDeleteUser() {
             return;
         }
 
-        // Находим логин пользователя для сообщения
         QString userLogin;
-        for (const auto &user : m_cachedUsers) {
-            if (user.id == userId) {
-                userLogin = user.login;
+        for (const auto &user : filteredUsers) {
+            if (user.idUser() == userId) {
+                userLogin = user.login();
                 break;
             }
         }
 
-        // Удаляем через модель
         if (m_adminModel->deleteUser(userId)) {
             m_view->showMessage("Успех", QString("Пользователь '%1' успешно удален!").arg(userLogin));
-            // Обновляем кэш
             loadUsersForDeletion();
         } else {
             m_view->showMessage("Ошибка",
@@ -142,6 +124,5 @@ void AdminController::handleLogout() {
 }
 
 void AdminController::updateUserList() {
-    // Обновляем кэш пользователей
     loadUsersForDeletion();
 }

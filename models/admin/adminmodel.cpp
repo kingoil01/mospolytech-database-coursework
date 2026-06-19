@@ -7,8 +7,8 @@
 
 AdminModel::AdminModel(QObject *parent) : QObject(parent) {}
 
-QVector<AdminUserInfo> AdminModel::getAllUsers() {
-    QVector<AdminUserInfo> users;
+QVector<AdminUser> AdminModel::getAllUsers() {
+    QVector<AdminUser> users;
 
     QSqlQuery query;
     query.exec(
@@ -21,34 +21,40 @@ QVector<AdminUserInfo> AdminModel::getAllUsers() {
 
     if (!query.lastError().isValid() && query.isActive()) {
         while (query.next()) {
-            AdminUserInfo info;
-            info.id = query.value(0).toInt();
-            info.login = query.value(1).toString();
-            info.email = query.value(2).toString();
-            info.hasCustomerProfile = query.value(3).toBool();
-            info.isAdmin = false;
+            int id = query.value(0).toInt();
+            QString login = query.value(1).toString();
+            QString email = query.value(2).toString();
+            bool hasProfile = query.value(3).toBool();
 
+            // Создаем объект AdminUser
+            AdminUser user(id, login, email, hasProfile, false);
+
+            // Получаем роли пользователя
             QSqlQuery roleQuery;
             roleQuery.prepare(
                 "SELECT r.role_name FROM user_roles ur "
                 "INNER JOIN roles r ON ur.id_role = r.id_role "
                 "WHERE ur.id_user = :userId"
             );
-            roleQuery.bindValue(":userId", info.id);
+            roleQuery.bindValue(":userId", id);
 
             QStringList roles;
+            bool isAdmin = false;
+
             if (roleQuery.exec()) {
                 while (roleQuery.next()) {
                     QString roleName = roleQuery.value(0).toString();
                     roles.append(roleName);
                     if (roleName == "Администратор" || roleName.toLower() == "admin") {
-                        info.isAdmin = true;
+                        isAdmin = true;
                     }
                 }
             }
-            info.roles = roles.join(", ");
 
-            users.append(info);
+            user.setIsAdmin(isAdmin);
+            user.setRoles(roles.join(", "));
+
+            users.append(user);
         }
     }
     else {
@@ -141,7 +147,6 @@ bool AdminModel::createUser(const QString &login, const QString &email,
     }
 
     int roleId = roleIdQuery.value(0).toInt();
-    qDebug() << "Найдена роль:" << roleName << "ID:" << roleId;
 
     // 4. Проверяем, есть ли уже такая роль у пользователя
     QSqlQuery checkQuery;
@@ -158,8 +163,8 @@ bool AdminModel::createUser(const QString &login, const QString &email,
         return false;
     }
 
-    if (checkQuery.next() && checkQuery.value(0).toInt() > 0) {
-    } else {
+    if (checkQuery.next() && checkQuery.value(0).toInt() > 0) {}
+    else {
         // 5. Назначаем роль
         QSqlQuery roleQuery;
         roleQuery.prepare(
@@ -184,7 +189,6 @@ bool AdminModel::createUser(const QString &login, const QString &email,
         return false;
     }
 
-    qDebug() << "Пользователь успешно создан с ID:" << userId;
     return true;
 }
 
@@ -197,7 +201,7 @@ bool AdminModel::deleteUser(int userId) {
     QSqlQuery query;
     query.exec("BEGIN;");
 
-    // Удаляем связи с ролями (каскадно удалятся, но на всякий случай)
+    // Удаляем связи с ролями
     QSqlQuery roleDelete;
     roleDelete.prepare("DELETE FROM user_roles WHERE id_user = :userId");
     roleDelete.bindValue(":userId", userId);
@@ -229,17 +233,18 @@ bool AdminModel::deleteUser(int userId) {
     return true;
 }
 
-QVector<RoleInfo> AdminModel::getAvailableRoles() {
-    QVector<RoleInfo> roles;
+QVector<Role> AdminModel::getAvailableRoles() {
+    QVector<Role> roles;
 
     QSqlQuery query("SELECT id_role, role_name FROM roles ORDER BY role_name");
 
     if (!query.lastError().isValid() && query.isActive()) {
         while (query.next()) {
-            RoleInfo info;
-            info.id = query.value(0).toInt();
-            info.name = query.value(1).toString();
-            roles.append(info);
+            Role role(
+                query.value(0).toInt(),
+                query.value(1).toString()
+            );
+            roles.append(role);
         }
     } else {
         m_lastError = query.lastError().text();

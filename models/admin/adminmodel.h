@@ -3,31 +3,30 @@
 
 #include <QObject>
 #include <QVector>
-
-struct AdminUserInfo {
-    int id;
-    QString login;
-    QString email;
-    QString roles;
-    bool isAdmin;
-    bool hasCustomerProfile;
-};
-
-struct RoleInfo {
-    int id;
-    QString name;
-};
+#include "adminuser.h"
+#include "role.h"
 
 class AdminModel : public QObject {
     Q_OBJECT
 public:
     explicit AdminModel(QObject *parent = nullptr);
 
-    QVector<AdminUserInfo> getAllUsers();
-    bool createUser(const QString &login, const QString &email, const QString &password, bool isAdmin);
+    // Получение списка всех пользователей
+    QVector<AdminUser> getAllUsers();
+
+    // Создание пользователя
+    bool createUser(const QString &login, const QString &email,
+                    const QString &password, bool isAdmin);
+
+    // Удаление пользователя
     bool deleteUser(int userId);
-    QVector<RoleInfo> getAvailableRoles();
+
+    // Получение доступных ролей
+    QVector<Role> getAvailableRoles();
+
+    // Проверка существования пользователя
     bool userExists(int userId);
+
     QString getLastError() const;
 
 private:

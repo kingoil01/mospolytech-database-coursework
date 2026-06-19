@@ -77,6 +77,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         controllers/admin/admincontroller.cpp
         models/admin/adminmodel.h
         models/admin/adminmodel.cpp
+        models/admin/adminuser.h
+        models/admin/role.h
 
 
 
