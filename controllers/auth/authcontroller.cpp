@@ -65,7 +65,6 @@ void AuthController::handleRegistration(const QString &login, const QString &pas
 void AuthController::handleLogin(const QString &login, const QString &password) {
     User user;
     if (m_model->validateUser(login, password, user)) {
-        m_authWindow->close();
 
         // Получаем все роли пользователя
         QVector<QPair<int, QString>> roles = m_model->getUserRoles(user.idUser());
@@ -137,6 +136,8 @@ void AuthController::showRoleSelectionDialog(const User &user, const QVector<QPa
 }
 
 void AuthController::showMainWindow(const User &user) {
+    m_authWindow->close();
+
     if (m_mainController) {
         m_mainController->deleteLater();
     }
@@ -163,6 +164,8 @@ void AuthController::handleMainLogout() {
 }
 
 void AuthController::showAdminWindow(const User &user) {
+    m_authWindow->close();
+
     if (m_adminController) {
         m_adminController->deleteLater();
     }
