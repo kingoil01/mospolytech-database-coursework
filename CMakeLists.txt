@@ -50,8 +50,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         views/main/orderhistorydialog.ui
         views/main/orderhistorydialog.h
         views/main/orderhistorydialog.cpp
-        controllers/main/ordercontroller.h
-        controllers/main/ordercontroller.cpp
+
+
         controllers/main/maincontroller.h
         controllers/main/maincontroller.cpp
         models/main/product.h

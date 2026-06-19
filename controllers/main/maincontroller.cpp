@@ -92,7 +92,7 @@ void MainController::handleEditProfileData() {
             showSuccess("Данные организации успешно обновлены!");
             updateUI();
         } else {
-            showError("Не удалось обновить профиль (возможно, телефон уже занят другой фирмой).");
+            showError("Не удалось обновить профиль.");
         }
     }
 }
@@ -165,7 +165,7 @@ void MainController::handleChangeCredentials() {
             m_view->setUserInfo(m_user);
             showSuccess("Ваши данные успешно изменены!");
         } else {
-            showError("Не удалось обновить данные (возможно, логин уже занят).");
+            showError("Не удалось обновить данные.");
         }
     }
 }

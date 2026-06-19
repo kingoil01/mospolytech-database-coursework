@@ -45,8 +45,6 @@ void CreateUserDialog::showSuccess(const QString &message) {
 }
 
 void CreateUserDialog::on_btnCreate_clicked() {
-    // Вся валидация в контроллере
-    // Просто отправляем сигнал, что пользователь нажал "Создать"
     accept();
 }
 

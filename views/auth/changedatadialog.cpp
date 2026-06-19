@@ -25,7 +25,6 @@ QString ChangeDataDialog::getNewPassword() const {
 }
 
 void ChangeDataDialog::setCurrentLogin(const QString &login) {
-    // Если в UI нет labelCurrentLogin, используем placeholder или другой способ
     ui->editNewLogin->setPlaceholderText("Текущий: " + login);
 }
 

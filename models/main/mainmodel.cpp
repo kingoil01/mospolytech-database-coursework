@@ -114,7 +114,6 @@ bool MainModel::placeOrder(int userId, QString &outDocNumber) {
     QSqlQuery query;
     query.exec("BEGIN;");
 
-    // 1. Ищем id_customer по нашему id_user
     query.prepare("SELECT id_customer FROM customers WHERE id_user = :id_user");
     query.bindValue(":id_user", userId);
     if (!query.exec() || !query.next()) {
@@ -124,7 +123,6 @@ bool MainModel::placeOrder(int userId, QString &outDocNumber) {
     }
     int idCustomer = query.value(0).toInt();
 
-    // 2. Генерируем уникальный номер документа
     QString docNumber = QString("ЗАКАЗ-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
     QDate orderDate = QDate::currentDate();
 
@@ -141,7 +139,6 @@ bool MainModel::placeOrder(int userId, QString &outDocNumber) {
     }
     int idOrder = query.value(0).toInt();
 
-    // 3. Переносим позиции корзины в order_items
     for (const auto &item : m_cart) {
         query.prepare("INSERT INTO order_items (id_order, id_delivery_option, quantity) "
                       "VALUES (:id_order, :id_delivery_option, :quantity)");

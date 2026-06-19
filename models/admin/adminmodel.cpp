@@ -50,7 +50,8 @@ QVector<AdminUserInfo> AdminModel::getAllUsers() {
 
             users.append(info);
         }
-    } else {
+    }
+    else {
         m_lastError = query.lastError().text();
         qDebug() << "Ошибка получения пользователей:" << m_lastError;
     }
@@ -118,7 +119,6 @@ bool AdminModel::createUser(const QString &login, const QString &email,
     }
 
     int userId = insertQuery.value(0).toInt();
-    qDebug() << "Создан пользователь с ID:" << userId;
 
     // 3. Получаем ID роли
     QString roleName = isAdmin ? "Администратор" : "Пользователь";
@@ -159,8 +159,6 @@ bool AdminModel::createUser(const QString &login, const QString &email,
     }
 
     if (checkQuery.next() && checkQuery.value(0).toInt() > 0) {
-        // Роль уже есть - это нормально, продолжаем
-        qDebug() << "Роль уже назначена пользователю";
     } else {
         // 5. Назначаем роль
         QSqlQuery roleQuery;
@@ -177,7 +175,6 @@ bool AdminModel::createUser(const QString &login, const QString &email,
             qDebug() << m_lastError;
             return false;
         }
-        qDebug() << "Роль назначена пользователю";
     }
 
     // 6. Фиксируем транзакцию

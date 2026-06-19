@@ -60,24 +60,11 @@ void AuthController::handleLogin(const QString &login, const QString &password) 
     if (m_model->validateUser(login, password, user)) {
         m_authWindow->close();
 
-        // ===== ДЕБАГ =====
-        qDebug() << "========================================";
-        qDebug() << "ПОЛЬЗОВАТЕЛЬ ВОШЕЛ:";
-        qDebug() << "  Login:" << user.login();
-        qDebug() << "  ID:" << user.idUser();
-        qDebug() << "  Email:" << user.email();
-        qDebug() << "  HasCustomerProfile:" << user.hasCustomerProfile();
-
         bool isAdmin = m_model->isAdmin(user.idUser());
-        qDebug() << "  isAdmin:" << isAdmin;
-        qDebug() << "========================================";
-        // ===== КОНЕЦ ДЕБАГА =====
 
         if (isAdmin) {
-            qDebug() << ">>> ВЫЗЫВАЕМ showAdminWindow()";  // ДЕБАГ
             showAdminWindow(user);
         } else {
-            qDebug() << ">>> ВЫЗЫВАЕМ showMainWindow()";    // ДЕБАГ
             showMainWindow(user);
         }
     } else {
@@ -86,7 +73,6 @@ void AuthController::handleLogin(const QString &login, const QString &password) 
 }
 
 void AuthController::showMainWindow(const User &user) {
-    qDebug() << ">>> showMainWindow() ВЫЗВАН для пользователя:" << user.login();  // ДЕБАГ
 
     if (m_mainController) {
         m_mainController->deleteLater();
@@ -114,8 +100,6 @@ void AuthController::handleMainLogout() {
 }
 
 void AuthController::showAdminWindow(const User &user) {
-    qDebug() << ">>> showAdminWindow() ВЫЗВАН для пользователя:" << user.login();  // ДЕБАГ
-
     if (m_adminController) {
         m_adminController->deleteLater();
     }

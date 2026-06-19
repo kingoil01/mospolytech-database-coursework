@@ -24,8 +24,7 @@ public:
     explicit AdminModel(QObject *parent = nullptr);
 
     QVector<AdminUserInfo> getAllUsers();
-    bool createUser(const QString &login, const QString &email,
-                    const QString &password, bool isAdmin);
+    bool createUser(const QString &login, const QString &email, const QString &password, bool isAdmin);
     bool deleteUser(int userId);
     QVector<RoleInfo> getAvailableRoles();
     bool userExists(int userId);

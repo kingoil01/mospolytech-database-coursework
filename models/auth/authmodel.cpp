@@ -7,7 +7,7 @@ AuthModel::AuthModel(QObject *parent) : QObject(parent) {}
 
 bool AuthModel::validateUser(const QString &login, const QString &password, User &outUser) {
     QSqlQuery query;
-    // Тянем данные пользователя и проверяем через LEFT JOIN, есть ли у него профиль заказчика
+    // Тянем данные пользователя и проверяем, есть ли у него профиль заказчика
     query.prepare("SELECT u.id_user, u.login, u.email, (c.id_customer IS NOT NULL) AS has_profile "
                   "FROM users u "
                   "LEFT JOIN customers c ON u.id_user = c.id_user "
@@ -85,7 +85,7 @@ bool AuthModel::getCustomerProfile(int idUser, QString &outOrg, QString &outAddr
 bool AuthModel::updateCustomerProfile(int idUser, const QString &org, const QString &addr, const QString &phone, const QString &cp) {
     QSqlQuery query;
 
-    // 1. Проверяем уникальность телефона (только если его меняют и он не принадлежит текущему юзеру)
+    // Проверяем уникальность телефона
     if (!phone.isEmpty()) {
         query.prepare("SELECT id_user FROM customers WHERE phone = :phone AND id_user != :id_user");
         query.bindValue(":phone", phone);
@@ -96,7 +96,7 @@ bool AuthModel::updateCustomerProfile(int idUser, const QString &org, const QStr
         }
     }
 
-    // 2. Безопасный и статичный UPDATE через COALESCE
+    // Статичный запрос
     query.prepare(
         "UPDATE customers SET "
         "  org_name = COALESCE(NULLIF(:org, ''), org_name), "
@@ -122,7 +122,7 @@ bool AuthModel::updateCustomerProfile(int idUser, const QString &org, const QStr
 bool AuthModel::updateUserCredentials(int idUser, const QString &newLogin, const QString &newEmail, const QString &newPassword) {
     QSqlQuery query;
 
-    // 1. Проверка занятости логина (только если пользователь его ввел)
+    // Проверка занятости логина
     if (!newLogin.isEmpty()) {
         query.prepare("SELECT id_user FROM users WHERE login = :login AND id_user != :id_user");
         query.bindValue(":login", newLogin);
@@ -134,12 +134,11 @@ bool AuthModel::updateUserCredentials(int idUser, const QString &newLogin, const
         }
 
         if (query.next()) {
-            qDebug() << "Этот логин уже занят другим пользователем!";
-            return false; // Прерываем выполнение, возвращаем false
+            return false;
         }
     }
 
-    // 2. Статичный, безопасный запрос через COALESCE и CASE
+    // Статичный запрос
     query.prepare(
         "UPDATE users SET "
         "  login = COALESCE(NULLIF(:newLogin, ''), login), "
@@ -158,8 +157,6 @@ bool AuthModel::updateUserCredentials(int idUser, const QString &newLogin, const
     query.bindValue(":id_user", idUser);
 
     if (!query.exec()) {
-        qDebug() << "!!! Ошибка выполнения UPDATE !!!";
-        qDebug() << "Текст ошибки БД:" << query.lastError().text();
         return false;
     }
 
@@ -176,12 +173,10 @@ bool AuthModel::isAdmin(int userId) const {
     query.bindValue(":userId", userId);
 
     if (!query.exec() || !query.next()) {
-        qDebug() << "Ошибка проверки админа:" << query.lastError().text();
         return false;
     }
 
     bool result = query.value(0).toInt() > 0;
-    qDebug() << ">>> isAdmin(" << userId << ") = " << result;
     return result;
 }
 
@@ -196,7 +191,6 @@ bool AuthModel::hasRole(int userId, const QString &roleName) const {
     query.bindValue(":roleName", roleName);
 
     if (!query.exec() || !query.next()) {
-        qDebug() << ">>> ОШИБКА hasRole():" << query.lastError().text();  // ДЕБАГ
         return false;
     }
 

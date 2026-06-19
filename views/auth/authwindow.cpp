@@ -8,7 +8,6 @@ AuthWindow::AuthWindow(QWidget *parent) : QWidget(parent), ui(new Ui::AuthWindow
 
 AuthWindow::~AuthWindow() { delete ui; }
 
-// <-- РЕАЛИЗУЕМ НОВЫЕ МЕТОДЫ
 void AuthWindow::clearFields() {
     ui->editLogin->clear();
     ui->editPassword->clear();

@@ -18,7 +18,7 @@ private:
     int m_idUser;
     QString m_login;
     QString m_email;
-    bool m_hasCustomerProfile; // Флаг: заполнена ли уже запись в customers
+    bool m_hasCustomerProfile;
 };
 
 #endif // USER_H

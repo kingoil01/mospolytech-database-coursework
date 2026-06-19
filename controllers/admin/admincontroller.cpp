@@ -10,7 +10,7 @@ AdminController::AdminController(const User &adminUser, AuthModel *authModel, QO
     , m_adminModel(new AdminModel(this))
     , m_adminUser(adminUser) {
 
-    // Связываем сигналы View со слотами Controller
+    // Связываем View со слотами Controller
     connect(m_view, &AdminWindow::createUserRequested,
             this, &AdminController::handleCreateUser);
     connect(m_view, &AdminWindow::deleteUserRequested,
@@ -39,11 +39,6 @@ void AdminController::handleCreateUser() {
         QString email = dialog.getEmail();
         QString password = dialog.getPassword();
         bool isAdmin = dialog.isAdminRole();
-
-        qDebug() << "Попытка создания пользователя:";
-        qDebug() << "  Login:" << login;
-        qDebug() << "  Email:" << email;
-        qDebug() << "  IsAdmin:" << isAdmin;
 
         // Валидация
         if (login.isEmpty() || email.isEmpty() || password.isEmpty()) {

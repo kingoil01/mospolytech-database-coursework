@@ -13,7 +13,6 @@ public:
 
     ~CustomerInfoDialog();
 
-    // Геттеры для извлечения введенного текста в MainWindow
     QString getOrgName() const;
     QString getAddress() const;
     QString getPhone() const;

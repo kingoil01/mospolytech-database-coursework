@@ -32,7 +32,6 @@ private:
     AdminModel *m_adminModel;
     User m_adminUser;
 
-    // Кэш для списка пользователей (для быстрого доступа)
     QVector<AdminUserInfo> m_cachedUsers;
 };
 

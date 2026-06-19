@@ -34,5 +34,5 @@ void RegWindow::on_btnRegister_clicked() {
 }
 
 void RegWindow::on_btnCansel_clicked() {
-    this->reject(); // Автоматически закроет диалоговое окно регистрации и вернет QDialog::Rejected в контроллер
+    this->reject();
 }

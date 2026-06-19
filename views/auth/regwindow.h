@@ -15,7 +15,7 @@ signals:
     void registrationSubmitted(const QString &login, const QString &password, const QString &email);
 
 private slots:
-    void on_btnRegister_clicked(); // Кнопка регистрации в .ui
+    void on_btnRegister_clicked();
     void on_btnCansel_clicked();
 
 private:

@@ -7,7 +7,6 @@
 #include <QString>
 #include <QDate>
 
-// Структуры для работы с заказами
 struct CartItem {
     int deliveryOptionId;
     int productId;
@@ -28,7 +27,6 @@ struct OrderInfo {
     double totalAmount;
 };
 
-// <-- НОВАЯ СТРУКТУРА ДЛЯ ПОЗИЦИЙ ЗАКАЗА
 struct OrderItemInfo {
     QString productName;
     QString deliveryMethodName;
@@ -60,7 +58,6 @@ public:
     // История заказов
     QVector<OrderInfo> getOrderHistory(int userId);
 
-    // <-- НОВЫЙ МЕТОД ДЛЯ ПОЛУЧЕНИЯ ПОЗИЦИЙ ЗАКАЗА
     QVector<OrderItemInfo> getOrderItems(int orderId);
 
     QString getLastError() const;

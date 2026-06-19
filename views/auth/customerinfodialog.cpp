@@ -25,9 +25,9 @@ void CustomerInfoDialog::on_btnSave_clicked() {
         QMessageBox::warning(this, "Внимание", "Заполните все обязательные поля!");
         return;
     }
-    accept(); // Закрывает окно со статусом QDialog::Accepted
+    accept();
 }
 
 void CustomerInfoDialog::on_btnCancel_clicked() {
-    reject(); // Закрывает окно со статусом QDialog::Rejected
+    reject();
 }

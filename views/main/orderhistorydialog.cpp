@@ -10,7 +10,6 @@ OrderHistoryDialog::OrderHistoryDialog(int userId, MainModel *model, QWidget *pa
     , m_userId(userId) {
     ui->setupUi(this);
 
-    // Настраиваем красивое растягивание колонок дерева
     ui->treeOrders->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->treeOrders->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     ui->treeOrders->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
@@ -34,13 +33,11 @@ void OrderHistoryDialog::loadHistory() {
 
     // Для каждого заказа создаем элемент дерева
     for (const auto &order : orders) {
-        // Создаем родительский элемент (заказ)
         QTreeWidgetItem *orderRoot = new QTreeWidgetItem(ui->treeOrders);
         orderRoot->setText(0, order.docNumber);
         orderRoot->setText(1, order.orderDate.toString("dd.MM.yyyy"));
         orderRoot->setText(2, QString::number(order.totalAmount, 'f', 2) + " руб.");
 
-        // Делаем текст заказа жирным
         QFont rootFont = orderRoot->font(0);
         rootFont.setBold(true);
         orderRoot->setFont(0, rootFont);
@@ -57,7 +54,6 @@ void OrderHistoryDialog::loadHistory() {
             childItem->setText(2, QString("%1 шт.").arg(item.quantity));
         }
 
-        // Автоматически раскрываем каждый заказ
         orderRoot->setExpanded(true);
     }
 }

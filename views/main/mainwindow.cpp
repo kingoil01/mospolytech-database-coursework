@@ -13,11 +13,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::setUserInfo(const User &user) {
-    // Используем существующие элементы UI или добавляем новые
-    // Например, можно использовать statusBar или label
-    // Если у вас нет labelUserInfo, можно использовать statusBar
-    // statusBar()->showMessage(QString("Пользователь: %1 (%2)").arg(user.login()).arg(user.email()));
-    // Или добавить label в UI
 }
 
 void MainWindow::setProfileButtonMode(bool hasProfile) {

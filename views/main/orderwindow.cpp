@@ -121,7 +121,7 @@ void OrderWindow::on_btnConfirmOrder_clicked() {
     QString docNumber;
     if (m_model->placeOrder(m_userId, docNumber)) {
         showMessage("Успех", QString("Заказ %1 успешно оформлен!").arg(docNumber));
-        accept();  // <-- УБИРАЕМ emit orderCompleted
+        accept();
     } else {
         showMessage("Ошибка", "Не удалось оформить заказ: " + m_model->getLastError(), true);
     }
