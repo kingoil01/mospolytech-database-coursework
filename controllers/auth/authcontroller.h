@@ -2,6 +2,8 @@
 #define AUTHCONTROLLER_H
 
 #include <QObject>
+#include <QPair>
+#include <QVector>
 #include "../../models/auth/authmodel.h"
 #include "../../views/auth/authwindow.h"
 
@@ -26,13 +28,13 @@ private slots:
 private:
     void showMainWindow(const User &user);
     void showAdminWindow(const User &user);
+    void showRoleSelectionDialog(const User &user, const QVector<QPair<int, QString>> &roles);  // <-- НОВЫЙ МЕТОД
 
     AuthModel *m_model;
     AuthWindow *m_authWindow;
     RegWindow *m_regWindow;
     MainController *m_mainController;
     AdminController *m_adminController;
-
 };
 
 #endif // AUTHCONTROLLER_H

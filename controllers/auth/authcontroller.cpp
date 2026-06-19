@@ -1,9 +1,14 @@
 #include "authcontroller.h"
 #include "../../controllers/main/maincontroller.h"
 #include "../../controllers/admin/admincontroller.h"
-#include "../../controllers/main/maincontroller.h"
 #include "../../views/auth/regwindow.h"
 #include <QMessageBox>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QDialogButtonBox>
 
 AuthController::AuthController(QObject *parent)
     : QObject(parent)
@@ -13,7 +18,6 @@ AuthController::AuthController(QObject *parent)
     , m_adminController(nullptr)
     , m_mainController(nullptr) {
 
-    // Создаем окно авторизации при создании контроллера
     m_authWindow = new AuthWindow();
 
     connect(m_authWindow, &AuthWindow::loginSubmitted,
@@ -31,6 +35,9 @@ AuthController::~AuthController() {
     }
     if (m_mainController) {
         m_mainController->deleteLater();
+    }
+    if (m_adminController) {
+        m_adminController->deleteLater();
     }
 }
 
@@ -60,20 +67,76 @@ void AuthController::handleLogin(const QString &login, const QString &password) 
     if (m_model->validateUser(login, password, user)) {
         m_authWindow->close();
 
-        bool isAdmin = m_model->isAdmin(user.idUser());
+        // Получаем все роли пользователя
+        QVector<QPair<int, QString>> roles = m_model->getUserRoles(user.idUser());
 
-        if (isAdmin) {
-            showAdminWindow(user);
+        if (roles.isEmpty()) {
+            QMessageBox::critical(m_authWindow, "Ошибка", "У пользователя нет ролей!");
+            return;
+        }
+
+        // Если только одна роль - входим сразу
+        if (roles.size() == 1) {
+            QString roleName = roles.first().second;
+            if (roleName == "Администратор" || roleName.toLower() == "admin") {
+                showAdminWindow(user);
+            } else {
+                showMainWindow(user);
+            }
         } else {
-            showMainWindow(user);
+            // Несколько ролей - показываем мини-диалог выбора
+            showRoleSelectionDialog(user, roles);
         }
     } else {
         QMessageBox::critical(m_authWindow, "Ошибка", "Неверный логин или пароль!");
     }
 }
 
-void AuthController::showMainWindow(const User &user) {
+void AuthController::showRoleSelectionDialog(const User &user, const QVector<QPair<int, QString>> &roles) {
+    // Создаем мини-диалог
+    QDialog popUp(m_authWindow);
+    popUp.setWindowTitle("Выбор роли");
+    popUp.setModal(true);
+    popUp.setMinimumWidth(350);
 
+    // Основной вертикальный layout
+    QVBoxLayout *mainLayout = new QVBoxLayout(&popUp);
+
+    // Информационная метка
+    QLabel *infoLabel = new QLabel(QString("Пользователь: <b>%1</b>\nВыберите роль для входа:").arg(user.login()), &popUp);
+    infoLabel->setWordWrap(true);
+    mainLayout->addWidget(infoLabel);
+
+    // Выпадающий список с ролями
+    QComboBox *comboRoles = new QComboBox(&popUp);
+    for (const auto &role : roles) {
+        comboRoles->addItem(role.second, role.first);
+    }
+    mainLayout->addWidget(comboRoles);
+
+    // Кнопки OK/Cancel
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &popUp);
+    connect(buttons, &QDialogButtonBox::accepted, &popUp, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &popUp, &QDialog::reject);
+    mainLayout->addWidget(buttons);
+
+    // Показываем диалог
+    if (popUp.exec() == QDialog::Accepted) {
+        QString selectedRole = comboRoles->currentText();
+
+        if (selectedRole == "Администратор" || selectedRole.toLower() == "admin") {
+            showAdminWindow(user);
+        } else {
+            showMainWindow(user);
+        }
+    } else {
+        // Пользователь отменил выбор - возвращаем на окно авторизации
+        m_authWindow->clearFields();
+        m_authWindow->show();
+    }
+}
+
+void AuthController::showMainWindow(const User &user) {
     if (m_mainController) {
         m_mainController->deleteLater();
     }

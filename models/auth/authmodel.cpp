@@ -197,23 +197,24 @@ bool AuthModel::hasRole(int userId, const QString &roleName) const {
     return query.value(0).toInt() > 0;
 }
 
-QStringList AuthModel::getUserRoles(int userId) const {
-    QStringList roles;
+QVector<QPair<int, QString>> AuthModel::getUserRoles(int userId) const {
+    QVector<QPair<int, QString>> roles;
 
     QSqlQuery query;
     query.prepare(
-        "SELECT r.role_name FROM user_roles ur "
+        "SELECT r.id_role, r.role_name FROM user_roles ur "
         "INNER JOIN roles r ON ur.id_role = r.id_role "
         "WHERE ur.id_user = :userId"
     );
     query.bindValue(":userId", userId);
 
     if (!query.exec()) {
+        qDebug() << "Ошибка получения ролей пользователя:" << query.lastError().text();
         return roles;
     }
 
     while (query.next()) {
-        roles.append(query.value(0).toString());
+        roles.append({query.value(0).toInt(), query.value(1).toString()});
     }
 
     return roles;

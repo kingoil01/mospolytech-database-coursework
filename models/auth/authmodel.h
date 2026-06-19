@@ -23,8 +23,8 @@ public:
     bool isAdmin(int userId) const;
     bool hasRole(int userId, const QString &roleName) const;
 
-    // Получение ролей пользователя
-    QStringList getUserRoles(int userId) const;
+    // Получение всех ролей пользователя
+    QVector<QPair<int, QString>> getUserRoles(int userId) const;
 
 };
 
